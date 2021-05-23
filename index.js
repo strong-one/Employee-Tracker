@@ -1,24 +1,23 @@
 const inquirer = require("inquirer");
 const Choices = require("inquirer/lib/objects/choices");
-
+const util = require("util");
 const mysql = require("mysql");
 
-// const cTable = require("console.table");
+require("console.table");
 
 //object, method
 const connection = mysql.createConnection({
   host: "localhost",
-
   // Your port, if not 3306
   port: 3306,
-
   // Your username
   user: "root",
-
   // Be sure to update with your own MySQL password!
   password: "password",
   database: "employees_db",
 });
+
+//connection.query = util.promisify(connection.query);
 
 // connection.connect((err) => {
 //   if (err) throw err;
@@ -39,13 +38,6 @@ const menuQuestions = [
   "Update employee manager",
 ];
 
-const addEmpQuestions = [
-  "What is the employee's first name",
-  "What is the employee's last name",
-  "What is the employee's role?",
-  "Who is the employees manager?",
-];
-
 // function to show options menu
 const start = () => {
   inquirer
@@ -53,7 +45,7 @@ const start = () => {
       name: "mainChoice",
       type: "list",
       message: "What would you like to do?",
-      choice: menuQuestions,
+      choices: menuQuestions,
     })
     .then((answer) => {
       switch (answer.mainChoice) {
@@ -98,20 +90,42 @@ const empByManager = () => {
   connection.query((err, res) => {});
 };
 
+const addEmpQuestions = [
+  {
+    name: "first_name",
+    type: "input",
+    message: "What is the employee's first name",
+  },
+  {
+    name: "last_name",
+    type: "input",
+    message: "What is the employee's last name",
+  },
+  {
+    name: "role_id",
+    type: "input",
+    message: "What is the employee'srole id",
+  },
+  {
+    name: "manager_id",
+    type: "input",
+    message: "What is the employee's managerid",
+  },
+];
+
 const addEmps = () => {
-  connection.query((err, res) => {
-    if (err) throw err;
-    inquirer
-      .prompt({
-        name: "addEmployee",
-        type: "list",
-        message: "Add employee",
-        choice: addEmpQuestions,
-      })
-      .then((answer) => {
-        connection.query("UPDATE employees SET ? WHERE ?", [{}]);
-      });
+  //   connection.query((err, res) => {
+  //     if (err) throw err;
+  inquirer.prompt(addEmpQuestions).then((answer) => {
+    connection.query("INSERT INTO employees SET ?", {
+      first_name: answer.first_name,
+      last_name: answer.last_name,
+      role_id: answer.role_id,
+      manager_id: answer.manager_id,
+    });
+    start();
   });
+  //});
 };
 
 const updateEmp = () => {
