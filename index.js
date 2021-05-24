@@ -24,8 +24,9 @@ const menuQuestions = [
   "View all employees by manager",
   "Add employee",
   "Update employee role",
+  "Update employee title",
   "Update employee manager",
-  "Remove an employee",
+  //   "Remove an employee",
 ];
 
 // function to show options menu
@@ -54,6 +55,9 @@ const start = () => {
         case "Update employee role":
           updateEmp();
           break;
+        case "Update employee title":
+          updateTitle();
+          break;
         case "Update employee manager":
           updateManager();
           break;
@@ -77,7 +81,7 @@ const showAllEmps = () => {
 
 const empByDep = () => {
   connection.query(
-    "SELECT role_id, first_name, last_name FROM employees ",
+    "SELECT title, role_id, first_name, last_name FROM employees ",
     (err, res) => {
       if (err) throw err;
       console.table("All employees by department", res);
@@ -111,12 +115,17 @@ const addEmpQuestions = [
   {
     name: "role_id",
     type: "input",
-    message: "What is the employee'srole id",
+    message: "What is the employee's role id",
+  },
+  {
+    name: "title",
+    type: "input",
+    message: "What is the employee's department?",
   },
   {
     name: "manager_id",
     type: "input",
-    message: "What is the employee's managerid",
+    message: "What is the employee's manager id",
   },
 ];
 
@@ -126,6 +135,7 @@ const addEmps = () => {
     connection.query("INSERT INTO employees SET ?", {
       first_name: answer.first_name,
       last_name: answer.last_name,
+      title: answer.title,
       role_id: answer.role_id,
       manager_id: answer.manager_id,
     });
@@ -142,12 +152,12 @@ const addEmps = () => {
 
 const updateId = [
   {
-    name: "empUpdate",
+    name: "last_name",
     type: "input",
     message: "What is the last name of the employee you want to update?",
   },
   {
-    name: "roleUpdate",
+    name: "role_id",
     type: "input",
     message: "What is thier new role id?",
   },
@@ -158,17 +168,41 @@ const updateEmp = () => {
     connection.query("UPDATE employees SET role_id = ? WHERE last_name = ?", [
       // set new employee id
       // what employee is being updated
-
-      answer.roleUpdate,
-      answer.empUpdate,
-      console.table("Updated employee"),
+      answer.role_id,
+      answer.last_name,
     ]);
     start();
     connection.query("SELECT * FROM employees", (err, res) => {
       if (err) throw err;
-      console.table("All employees", res);
+      console.table("Updated employees", res);
     });
-    // start();
+  });
+};
+
+const titleQuestion = [
+  {
+    name: "last_name",
+    type: "input",
+    message: "What is the last name of the employee you want to update?",
+  },
+  {
+    name: "title",
+    type: "input",
+    message: "What is thier new department?",
+  },
+];
+
+updateTitle = () => {
+  inquirer.prompt(titleQuestion).then((answer) => {
+    connection.query("UPDATE employees SET title = ? WHERE last_name = ?", [
+      answer.title,
+      answer.last_name,
+    ]);
+    start();
+    connection.query("SELECT * FROM employees", (err, res) => {
+      if (err) throw err;
+      console.table("Updated employees", res);
+    });
   });
 };
 
@@ -240,14 +274,14 @@ const updateManager = () => {
 //   });
 // };
 
-// connection.connect((err) => {
-//   if (err) throw err;
-//   console.log(`connected as id ${connection.threadId}`);
-//   start();
+connection.connect((err) => {
+  if (err) throw err;
+  console.log(`connected as id ${connection.threadId}`);
+  start();
 
-//   // ENDS SQL SERVER CONNECTION
-//   //connection.end();
-// });
+  // ENDS SQL SERVER CONNECTION
+  //connection.end();
+});
 
 // console.table method and mySQL is installed and available
 
