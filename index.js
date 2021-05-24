@@ -36,6 +36,7 @@ const menuQuestions = [
   "Add employee",
   "Update employee role",
   "Update employee manager",
+  "Remove employee",
 ];
 
 // function to show options menu
@@ -66,6 +67,9 @@ const start = () => {
           break;
         case "Update employee manager":
           updateManager();
+        case "Remove an employee":
+          removeEmp();
+          break;
 
         default:
           break;
@@ -78,16 +82,29 @@ const showAllEmps = () => {
     if (err) throw err;
     console.table("All employees", res);
   });
+  start();
 };
 
 const empByDep = () => {
-  connection.query("SELECT * FROM department", (err, res) => {
-    if (err) throw err;
-  });
+  connection.query(
+    "SELECT role_id, first_name, last_name FROM employees ",
+    (err, res) => {
+      if (err) throw err;
+      console.table("All employees by department", res);
+    }
+  );
+  start();
 };
 
 const empByManager = () => {
-  connection.query((err, res) => {});
+  connection.query(
+    "SELECT manager_id, first_name, last_name FROM employees",
+    (err, res) => {
+      if (err) throw err;
+      console.table("All employees by manager", res);
+    }
+  );
+  start();
 };
 
 const addEmpQuestions = [
@@ -114,8 +131,7 @@ const addEmpQuestions = [
 ];
 
 const addEmps = () => {
-  //   connection.query((err, res) => {
-  //     if (err) throw err;
+  //   if (err) throw err;
   inquirer.prompt(addEmpQuestions).then((answer) => {
     connection.query("INSERT INTO employees SET ?", {
       first_name: answer.first_name,
@@ -123,26 +139,124 @@ const addEmps = () => {
       role_id: answer.role_id,
       manager_id: answer.manager_id,
     });
+    connection.query("SELECT * FROM employees", (err, res) => {
+      if (err) throw err;
+      console.table("All employees", res);
+    });
+
+    // console.table(answer)
     start();
   });
   //});
 };
 
+const updateId = [
+  {
+    name: "empUpdate",
+    type: "input",
+    message: "What is the last name of the employee you want to update?",
+  },
+  {
+    name: "roleUpdate",
+    type: "input",
+    message: "What is thier new role id?",
+  },
+];
+
 const updateEmp = () => {
-  connection.query((err, res) => {});
+  inquirer.prompt(updateId).then((answer) => {
+    connection.query("UPDATE employees SET role_id = ? WHERE last_name = ?", [
+      // set new employee id
+      // what employee is being updated
+
+      answer.roleUpdate,
+      answer.empUpdate,
+      console.table("Updated employee"),
+    ]);
+    start();
+    connection.query("SELECT * FROM employees", (err, res) => {
+      if (err) throw err;
+      console.table("All employees", res);
+    });
+    // start();
+  });
 };
 
+const managerUpdateQuestions = [
+  {
+    name: "empUpdate",
+    type: "input",
+    message:
+      "What is the last name of the employee manager you want to update?",
+  },
+  {
+    name: "managerUpdate",
+    type: "input",
+    message: "What is thier new manager id?",
+  },
+];
+
 const updateManager = () => {
-  connection.query((err, res) => {});
+  inquirer.prompt(managerUpdateQuestions).then((answer) => {
+    connection.query(
+      "UPDATE employees SET manager_id = ? WHERE last_name = ?",
+      [
+        // set new employee id
+        // what employee is being updated
+
+        answer.managerUpdate,
+        answer.empUpdate,
+        console.table("Updated manager"),
+      ]
+    );
+    start();
+    connection.query("SELECT * FROM employees", (err, res) => {
+      if (err) throw err;
+      console.table("All employees", res);
+    });
+  });
+};
+
+const removeEmpQuestions = [
+  {
+    name: "first_name",
+    type: "input",
+    message: "What is the first name of the employee you want to remove?",
+  },
+  {
+    name: "last_name",
+    type: "input",
+    message: "What is the last name of the employee you want to remove?",
+  },
+];
+
+const removeEmp = () => {
+  inquirer.prompt(removeEmpQuestions).then((answer) => {
+    connection.query(
+      "DELETE FROM employees WHERE first_name = ? last_name = ?",
+      [
+        answer.first_name,
+        answer.last_name,
+        console.table(
+          `Deleted ${(answer.first_name, answer.last_name)} from database`
+        ),
+      ]
+    );
+    start();
+    connection.query("SELECT * FROM employees", (err, res) => {
+      if (err) throw err;
+      console.table("All employees", res);
+    });
+  });
 };
 
 connection.connect((err) => {
   if (err) throw err;
   console.log(`connected as id ${connection.threadId}`);
   start();
-  //afterConnection();
+
   // ENDS SQL SERVER CONNECTION
-  //   connection.end();
+  //connection.end();
 });
 
 // console.table method and mySQL is installed and available
