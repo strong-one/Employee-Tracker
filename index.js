@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const Choices = require("inquirer/lib/objects/choices");
+const choices = require("inquirer/lib/objects/choices");
 const util = require("util");
 const mysql = require("mysql");
 
@@ -17,17 +17,6 @@ const connection = mysql.createConnection({
   database: "employees_db",
 });
 
-//connection.query = util.promisify(connection.query);
-
-// connection.connect((err) => {
-//   if (err) throw err;
-//   console.log(`connected as id ${connection.threadId}`);
-//   start();
-//   //afterConnection();
-//   // ENDS SQL SERVER CONNECTION
-//   //   connection.end();
-// });
-
 // questions for inquirer
 const menuQuestions = [
   "View all employees",
@@ -36,7 +25,7 @@ const menuQuestions = [
   "Add employee",
   "Update employee role",
   "Update employee manager",
-  "Remove employee",
+  "Remove an employee",
 ];
 
 // function to show options menu
@@ -67,9 +56,10 @@ const start = () => {
           break;
         case "Update employee manager":
           updateManager();
-        case "Remove an employee":
-          removeEmp();
           break;
+        // case "Remove an employee":
+        // removeEmp();
+        // break;
 
         default:
           break;
@@ -217,47 +207,47 @@ const updateManager = () => {
   });
 };
 
-const removeEmpQuestions = [
-  {
-    name: "first_name",
-    type: "input",
-    message: "What is the first name of the employee you want to remove?",
-  },
-  {
-    name: "last_name",
-    type: "input",
-    message: "What is the last name of the employee you want to remove?",
-  },
-];
+// const removeEmpQuestions = [
+//   {
+//     name: "first_name",
+//     type: "input",
+//     message: "What is the first name of the employee you want to remove?",
+//   },
+//   {
+//     name: "last_name",
+//     type: "input",
+//     message: "What is the last name of the employee you want to remove?",
+//   },
+// ];
 
-const removeEmp = () => {
-  inquirer.prompt(removeEmpQuestions).then((answer) => {
-    connection.query(
-      "DELETE FROM employees WHERE first_name = ? last_name = ?",
-      [
-        answer.first_name,
-        answer.last_name,
-        console.table(
-          `Deleted ${(answer.first_name, answer.last_name)} from database`
-        ),
-      ]
-    );
-    start();
-    connection.query("SELECT * FROM employees", (err, res) => {
-      if (err) throw err;
-      console.table("All employees", res);
-    });
-  });
-};
+// const removeEmp = () => {
+//   inquirer.prompt(removeEmpQuestions).then((answer) => {
+//     connection.query(
+//       "DELETE FROM employees WHERE first_name = ? AND last_name = ?",
+//       [
+//         answer.first_name,
+//         answer.last_name,
+//         console.table(
+//           `Deleted ${(answer.first_name, answer.last_name)} from database`
+//         ),
+//       ]
+//     );
+//     start();
+//     connection.query("SELECT * FROM employees", (err, res) => {
+//       if (err) throw err;
+//       console.table("All employees", res);
+//     });
+//   });
+// };
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log(`connected as id ${connection.threadId}`);
-  start();
+// connection.connect((err) => {
+//   if (err) throw err;
+//   console.log(`connected as id ${connection.threadId}`);
+//   start();
 
-  // ENDS SQL SERVER CONNECTION
-  //connection.end();
-});
+//   // ENDS SQL SERVER CONNECTION
+//   //connection.end();
+// });
 
 // console.table method and mySQL is installed and available
 
