@@ -1,5 +1,9 @@
 # Strongs-Employee-Tracker
 
+![Employee tracker](Assets/employee-tracker.gif)
+
+![link to video]()
+
 ## Description
 
 This app is an employee tracker, the user is able to view all employees in the database by name, department or manager. Other functionality includes, updating or adding employees, updating managers and removing employees.
