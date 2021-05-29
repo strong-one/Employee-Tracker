@@ -2,7 +2,7 @@
 
 ![Employee tracker](Assets/employee-tracker.gif)
 
-[View video demo](https://drive.google.com/drive/folders/1qKK0JLYur2o_e7IArBsU5uJcXhKP1Paf?hl=en)
+[View video demo](https://drive.google.com/file/d/1Fif8KnR-GOX3JK2lKXpFosGQ-pIZA8h3/view?usp=sharing)
 
 ## Description
 
